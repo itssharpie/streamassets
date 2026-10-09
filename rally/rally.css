@@ -4,6 +4,13 @@
    GPV continues to own live input, stick movement and trigger pressure.
 */
 html, body { background:transparent !important; margin:0; overflow:hidden; }
+/* Warm the pressed-state images before the first controller input. */
+body::before {
+  content: url("assets/bumper-pressed.svg") url("assets/dpad-down-pressed.svg") url("assets/dpad-left-pressed.svg") url("assets/dpad-right-pressed.svg") url("assets/dpad-up-pressed.svg") url("assets/face-circle-pressed.svg") url("assets/face-cross-pressed.svg") url("assets/face-square-pressed.svg") url("assets/face-triangle-pressed.svg") url("assets/trigger-left-pressed.svg") url("assets/trigger-right-pressed.svg");
+  position:fixed; left:-10000px; top:-10000px;
+  width:1px; height:1px; overflow:hidden;
+  visibility:hidden; pointer-events:none;
+}
 .controller.ds4.white:not(.disconnected) {
   background-image:url("assets/shell.png");
   background-size:806px 598px;
