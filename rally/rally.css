@@ -1,0 +1,103 @@
+/* SHARPIE / RALLY — Gamepad Viewer DS4 White (s=8)
+   Hosted use: https://app.gpv.gg/?p=1&s=8&editcss=YOUR_ENCODED_CSS_URL
+   This file and the assets directory must stay together.
+   GPV continues to own live input, stick movement and trigger pressure.
+*/
+html, body { background:transparent !important; margin:0; overflow:hidden; }
+.controller.ds4.white:not(.disconnected) {
+  background-image:url("assets/shell.png");
+  background-size:806px 598px;
+  background-repeat:no-repeat;
+  background-position:0 0;
+}
+/* Keep the control layers separate from the illustrated shell. */
+.ds4.white .sticks { left:229.4px; top:308.1px; }
+.ds4.white .stick,
+.ds4.white .stick.left,
+.ds4.white .stick.right,
+.ds4.white .stick.pressed.left,
+.ds4.white .stick.pressed.right {
+  width:94px; height:94px;
+  background-image:url("assets/stick-cap.png");
+  background-repeat:no-repeat;
+  background-size:108.2px 108.5px;
+  background-position:-7.08px -7.34px;
+  border-radius:50%;
+}
+.ds4.white .stick.left { left:0; top:0; }
+.ds4.white .stick.right { left:253px; top:0; }
+.ds4.white .stick.pressed {
+  filter:grayscale(1) brightness(1.7) drop-shadow(0 0 3px #64dfff);
+}
+.ds4.white .button,
+.ds4.white .button.pressed {
+  background-size:55px 55px;
+  background-position:0 0;
+  background-repeat:no-repeat;
+}
+.ds4.white .button.a { background-image:url("assets/face-cross.svg"); }
+.ds4.white .button.b { background-image:url("assets/face-circle.svg"); }
+.ds4.white .button.x { background-image:url("assets/face-square.svg"); }
+.ds4.white .button.y { background-image:url("assets/face-triangle.svg"); }
+.ds4.white .button.a.pressed { background-image:url("assets/face-cross-pressed.svg"); }
+.ds4.white .button.b.pressed { background-image:url("assets/face-circle-pressed.svg"); }
+.ds4.white .button.x.pressed { background-image:url("assets/face-square-pressed.svg"); }
+.ds4.white .button.y.pressed { background-image:url("assets/face-triangle-pressed.svg"); }
+.ds4.white .dpad { left:92px; top:181px; }
+.ds4.white .face,
+.ds4.white .face.pressed { background-repeat:no-repeat; background-position:0 0; }
+.ds4.white .face.up { background-image:url("assets/dpad-up.svg"); }
+.ds4.white .face.down { background-image:url("assets/dpad-down.svg"); }
+.ds4.white .face.left { background-image:url("assets/dpad-left.svg"); }
+.ds4.white .face.right { background-image:url("assets/dpad-right.svg"); }
+.ds4.white .face.up.pressed { background-image:url("assets/dpad-up-pressed.svg"); }
+.ds4.white .face.down.pressed { background-image:url("assets/dpad-down-pressed.svg"); }
+.ds4.white .face.left.pressed { background-image:url("assets/dpad-left-pressed.svg"); }
+.ds4.white .face.right.pressed { background-image:url("assets/dpad-right-pressed.svg"); }
+.ds4.white .button.pressed,
+.ds4.white .face.pressed { filter:drop-shadow(0 0 3px #63ddff); }
+.ds4.white .triggers { top:0; }
+.ds4.white .triggers::before,
+.ds4.white .triggers::after {
+  content:""; position:absolute; top:0; width:99px; height:90px;
+  background-size:99px 90px; background-repeat:no-repeat;
+  pointer-events:none;
+}
+.ds4.white .triggers::before { left:0; background-image:url("assets/trigger-left.svg"); }
+.ds4.white .triggers::after { right:0; background-image:url("assets/trigger-right.svg"); }
+.ds4.white .trigger {
+  position:relative; z-index:1;
+  background-repeat:no-repeat; background-size:99px 90px;
+  background-position:0 0;
+}
+.ds4.white .trigger.left { background-image:url("assets/trigger-left-pressed.svg"); }
+.ds4.white .trigger.right { background-image:url("assets/trigger-right-pressed.svg"); background-position:0 0; }
+.ds4.white .trigger-button { display:none; }
+.ds4.white .bumper { background-image:url("assets/bumper-pressed.svg"); background-size:99px 23px; }
+.ds4.white .arrows { top:138px; left:229px; width:347px; }
+.ds4.white .back,
+.ds4.white .start {
+  background:none; border-radius:12px;
+  box-shadow:inset 0 0 0 2px #dcffff,0 0 8px #46dfff;
+}
+.ds4.white .back.pressed,
+.ds4.white .start.pressed { background:rgba(215,250,255,.7); }
+.ds4.white .touchpad { left:272px; top:120px; width:262px; height:153px; border-radius:16px; }
+.ds4.white .touchpad::before,
+.ds4.white .touchpad::after { content:none; }
+.ds4.white .touchpad.pressed {
+  background-image:none;
+  box-shadow:inset 0 0 0 3px #fff,0 0 10px #6fefff;
+}
+.ds4.white .meta.pressed {
+  background:none; border-radius:50%;
+  box-shadow:inset 0 0 0 2px #fff,0 0 8px #76eaff;
+}
+.controller.ds4.white.disconnected { background:none; }
+.controller.ds4.white.disconnected::after {
+  content:"CONTROLLER DISCONNECTED";
+  position:absolute; top:190px; left:130px; right:130px;
+  padding:22px 10px; border:2px solid #00bfff; border-radius:12px;
+  background:rgba(4,13,31,.96); color:white;
+  font:700 24px/1.4 Arial,sans-serif; text-align:center;
+}
