@@ -53,7 +53,7 @@ body::before {
   visibility:hidden; pointer-events:none;
 }
 .controller.ds4.white:not(.disconnected) {
-  background-image:url("assets/shell.png");
+  background-image:url("assets/shell-glitch.gif");
   background-size:806px 598px;
   background-repeat:no-repeat;
   background-position:0 0;
@@ -152,7 +152,7 @@ body::before {
 `;
 fs.writeFileSync(path.join(root,'rally.css'),css);
 const embedded=css.replace(/url\("(assets\/[^\"]+)"\)/g,(_,rel)=>{
- const mime=rel.endsWith('.png')?'image/png':'image/svg+xml';
+ const mime=rel.endsWith('.gif')?'image/gif':rel.endsWith('.png')?'image/png':'image/svg+xml';
  return `url("data:${mime};base64,${fs.readFileSync(path.join(root,rel)).toString('base64')}")`;
 });
 fs.writeFileSync(path.join(root,'RALLY-PASTE-INTO-OBS.txt'),embedded);
