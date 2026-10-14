@@ -1,6 +1,6 @@
 # SHARPIE / RALLY
 
-Custom Gamepad Viewer skin for the white PS4 layout (`s=8`): blue shell, red-and-white racing stripes, cyan controls, and a SHARPIE touchpad with a brief red/cyan glitch every five seconds. The animation is part of the transparent shell GIF. Each moving control is a separate asset; Gamepad Viewer continues to handle live input.
+Custom Gamepad Viewer skin for the white PS4 layout (`s=8`): blue shell, red-and-white racing stripes, cyan controls, and a SHARPIE touchpad with a brief red/cyan glitch every four seconds. The approved effect has no particles, light sweep, or border flash. The animation is part of the transparent shell GIF. Each moving control is a separate asset; Gamepad Viewer continues to handle live input.
 
 ## Install in OBS
 
@@ -19,13 +19,13 @@ The link above loads the main branch through jsDelivr. For a fixed release, repl
 ## Files
 
 - `rally.css`: controller styling, using relative image paths.
-- `assets/shell-glitch.gif`: transparent animated shell and nameplate; 806 × 598, five-second loop.
+- `assets/shell-glitch.gif`: transparent animated shell and nameplate; 806 × 598, four-second loop.
 - `assets/shell.png`: original full-resolution static artwork, retained for rebuilding.
 - `assets/stick-cap.png`: independently moving cap for each stick.
 - `assets/face-*.svg`, `dpad-*.svg`, and `trigger-*.svg`: idle and pressed artwork.
 - `assets/bumper-pressed.svg`: bumper activation artwork.
 - `build.mjs`: regenerates SVG controls, CSS, and an embedded OBS stylesheet with Node.js; preserves the PNG and GIF artwork.
-- `build-shell-gif.cjs` and `source/shell-glitch.css`: reproducible animation source. With Node.js, Playwright Chromium, FFmpeg, and ImageMagick installed, run `node build-shell-gif.cjs` and then `node build.mjs`. Optionally set `CHROMIUM_PATH` to an existing Chromium executable.
+- `build-shell-gif.cjs`: reproducible approved animation. With Node.js, `sharp`, `@napi-rs/canvas`, FFmpeg, and ImageMagick installed, run `node build-shell-gif.cjs` and then `node build.mjs`.
 - `make-viewer-link.html`: local link builder for another public CSS address.
 
 The stylesheet and complete `assets` directory must stay together. GIF uses an indexed palette and binary transparency; the original PNG remains available for a static version.

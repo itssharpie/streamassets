@@ -1,46 +1,23 @@
-/* Encode the existing SHARPIE glitch animation into the shell image.
-   Requires Node.js, playwright, ffmpeg and ImageMagick. Set CHROMIUM_PATH if needed.
-   No live controls are baked into this GIF. */
-const fs = require('node:fs');
-const os = require('node:os');
-const path = require('node:path');
-const { pathToFileURL } = require('node:url');
-const { execFileSync } = require('node:child_process');
-const { chromium } = require('playwright');
-
-async function main() {
-  const root = __dirname;
-  const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'rally-shell-'));
-  const shell = pathToFileURL(path.join(root, 'assets/shell.png')).href;
-  const effect = fs.readFileSync(path.join(root, 'source/shell-glitch.css'), 'utf8')
-    .replaceAll('../assets/shell.png', shell);
-  const html = `<!doctype html><meta charset="utf-8"><style>
-  html,body {width:806px;height:598px;margin:0;background:transparent;overflow:hidden}
-  .controller {position:relative;width:806px;height:598px;background:url("${shell}") 0 0 / 806px 598px no-repeat}
-  .touchpad {position:absolute;left:272px;top:120px;width:262px;height:153px}
-  ${effect}</style><div class="controller ds4 white"><div class="touchpad"></div></div>`;
-  fs.writeFileSync(path.join(tmp, 'render.html'), html);
-  const options = { headless:true, args:['--no-sandbox', '--disable-dev-shm-usage'] };
-  if (process.env.CHROMIUM_PATH) options.executablePath = process.env.CHROMIUM_PATH;
-  const browser = await chromium.launch(options);
-  try {
-    const page = await browser.newPage({ viewport:{width:806,height:598}, deviceScaleFactor:1 });
-    await page.goto(pathToFileURL(path.join(tmp, 'render.html')).href);
-    await page.evaluate(async src => { const image=new Image(); image.src=src; await image.decode(); }, shell);
-    // One complete 5-second loop at 25 fps; the first glitch starts after 0.44 s.
-    for (let i=0; i<125; i++) {
-      await page.evaluate(t => document.getAnimations().forEach(a => { a.pause(); a.currentTime=t; }), ((i+90)%125)*40);
-      await page.screenshot({path:path.join(tmp, `${String(i).padStart(3,'0')}.png`), omitBackground:true});
-    }
-  } finally { await browser.close(); }
-  execFileSync('ffmpeg', ['-hide_banner','-loglevel','error','-y','-framerate','25',
-    '-i',path.join(tmp,'%03d.png'),'-filter_complex',
-    '[0:v]split[a][b];[a]palettegen=reserve_transparent=1:stats_mode=full[p];[b][p]paletteuse=dither=sierra2_4a:diff_mode=rectangle:alpha_threshold=128',
-    '-loop','0',path.join(tmp,'unoptimized.gif')], {stdio:'inherit'});
-  // Merge repeated idle frames and store only changing plate rectangles.
-  execFileSync('convert', [path.join(tmp,'unoptimized.gif'),'-coalesce','-layers','Optimize',
-    path.join(root,'assets/shell-glitch.gif')], {stdio:'inherit'});
-  fs.rmSync(tmp,{recursive:true,force:true});
-  console.log('Built assets/shell-glitch.gif (806 x 598; 5-second transparent loop).');
-}
-main().catch(error => { console.error(error); process.exit(1); });
+/* Approved SHARPIE glitch: 0.6-second burst every 4 seconds.
+   Requires sharp, @napi-rs/canvas, ffmpeg, and ImageMagick. */
+const fs=require('fs'),path=require('path'),os=require('os');
+const {execFileSync}=require('child_process');
+const sharp=require('sharp');
+const {createCanvas,ImageData}=require('@napi-rs/canvas');
+(async()=>{
+ const root=__dirname,tmp=fs.mkdtempSync(path.join(os.tmpdir(),'rally-glitch-'));
+ const {data,info}=await sharp(path.join(root,'assets/shell.png')).ensureAlpha().raw().toBuffer({resolveWithObject:true});
+ const original=createCanvas(info.width,info.height);original.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(data),info.width,info.height),0,0);
+ const base=createCanvas(806,598);base.getContext('2d').drawImage(original,0,0,806,598);
+ const canvas=createCanvas(806,598),c=canvas.getContext('2d');
+ const states=[[0,80,5,11,10,-4,32,4,'cyan'],[80,160,-7,25,8,5,17,4,'red'],[160,240,3,14,17,-3,35,4,'cyan'],[360,440,6,30,9,-5,12,4,'red'],[440,520,-4,19,6,5,36,4,'cyan'],[520,600,2,34,7,-2,21,2,'cyan']];
+ for(let i=0;i<100;i++){
+  c.clearRect(0,0,806,598);c.drawImage(base,0,0);
+  const ms=((i/25+3.5)%4)*1000,s=states.find(s=>ms>=s[0]&&ms<s[1]);
+  if(s){c.save();c.drawImage(base,282,178+s[3],244,s[4],282+s[2],178+s[3],244,s[4]);c.globalAlpha=.85;c.filter=s[8]==='red'?'brightness(.4) sepia(1) saturate(12) hue-rotate(310deg)':'brightness(.4) sepia(1) saturate(12) hue-rotate(135deg) brightness(1.6)';c.drawImage(base,282,178+s[6],244,s[7],282+s[5],178+s[6],244,s[7]);c.restore();}
+  fs.writeFileSync(path.join(tmp,String(i).padStart(3,'0')+'.png'),canvas.toBuffer('image/png'));
+ }
+ execFileSync('ffmpeg',['-hide_banner','-loglevel','error','-y','-framerate','25','-i',tmp+'/%03d.png','-filter_complex','[0:v]split[a][b];[a]palettegen=reserve_transparent=1:stats_mode=full[p];[b][p]paletteuse=dither=bayer:bayer_scale=3:diff_mode=rectangle:alpha_threshold=128','-loop','0',tmp+'/raw.gif']);
+ execFileSync('convert',[tmp+'/raw.gif','-coalesce','-layers','Optimize',path.join(root,'assets/shell-glitch.gif')]);
+ fs.rmSync(tmp,{recursive:true,force:true});console.log('Built approved transparent shell: 806x598, 4-second loop.');
+})().catch(e=>{console.error(e);process.exit(1)});
